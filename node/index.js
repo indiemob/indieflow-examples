@@ -1,6 +1,9 @@
 import express from 'express'
 import stepFactory from './step-factory.js'
 import { validateInputRequest } from './util.js'
+import { config } from 'dotenv'
+
+config()
 
 const app = express()
 app.use(express.json())
@@ -19,8 +22,10 @@ app.post('/hook', async (req, res) => {
     res.status(400).json({ error: 'Invalid input request, please verify the signature' })
     return
   }
+
   const step = stepFactory(context.step_name)
-  return res.json(step(data))
+
+  return res.json(step({ context, data }))
 })
 
 app.listen(port, () => {
